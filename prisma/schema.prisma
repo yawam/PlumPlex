@@ -1,0 +1,43 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id    String @id @default(uuid())
+  firstName  String
+  lastName   String
+  name  String?
+  email String @unique
+  image String?
+  isClient Boolean @default(false)
+  isPlumber Boolean @default(false)
+
+}
+
+model Client {
+  id          String   @id @default(uuid()) @db.Char(36)  // Using Char(36) for UUID in MySQL
+  firstname   String   @db.VarChar(191)     // Adjusted for MySQL VARCHAR
+  lastname    String   @db.VarChar(191)
+  image       String   @db.VarChar(191)
+  email       String   @unique @db.VarChar(191)
+  created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
+  updated_at  DateTime @updatedAt @db.Timestamp
+}
+
+model Plumber {
+  id          String   @id @default(uuid()) @db.Char(36)  // Using Char(36) for UUID in MySQL
+  firstname   String   @db.VarChar(191)
+  lastname    String   @db.VarChar(191)
+  image       String   @db.VarChar(191)
+  email       String   @unique @db.VarChar(191)
+  created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
+  updated_at  DateTime @updatedAt @db.Timestamp
+}
+
+
+
