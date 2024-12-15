@@ -14,6 +14,7 @@ model User {
   name  String?
   email String @unique
   image String?
+  status    String  @default("Offline") // Add this field for user status
   isClient Boolean @default(false)
   isPlumber Boolean @default(false)
 
@@ -25,8 +26,13 @@ model Client {
   lastname    String   @db.VarChar(191)
   image       String   @db.VarChar(191)
   email       String   @unique @db.VarChar(191)
+  latitude    Float?   // Optional if not all clients have locations
+  longitude   Float?   // Optional
   created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
   updated_at  DateTime @updatedAt @db.Timestamp
+  
+  plumberReviews PlumberReview[] // Reviews this client gives to plumbers
+  reviewsFromPlumbers ClientReview[] // Reviews this client receives from plumbers
 }
 
 model Plumber {
@@ -35,9 +41,46 @@ model Plumber {
   lastname    String   @db.VarChar(191)
   image       String   @db.VarChar(191)
   email       String   @unique @db.VarChar(191)
+  latitude    Float?
+  longitude   Float?
+  missions    Int      @default(0)
+  boosted     Boolean  @default(false)
   created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
   updated_at  DateTime @updatedAt @db.Timestamp
+  
+  clientReviews ClientReview[] // Reviews this plumber gives to clients
+  reviewsFromClients PlumberReview[] // Reviews this plumber receives from clients
 }
 
+model ClientReview {
+  id          String   @id @default(uuid()) @db.Char(36)
+  rating      Int      @default(1)
+  reviewText  String?
+  created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
+  updated_at  DateTime @updatedAt @db.Timestamp
+
+  // Relationships
+  reviewer   Plumber @relation(fields: [reviewerId], references: [id], map: "fk_plumber_reviewer")
+  reviewerId String  @db.Char(36)
+  
+  reviewee   Client  @relation(fields: [revieweeId], references: [id], map: "fk_client_reviewee")
+  revieweeId String  @db.Char(36)
+}
+
+
+model PlumberReview {
+  id          String   @id @default(uuid()) @db.Char(36)
+  rating      Int      @default(1)
+  reviewText  String?
+  created_at  DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamp
+  updated_at  DateTime @updatedAt @db.Timestamp
+
+  // Relationships
+  reviewer   Client  @relation(fields: [reviewerId], references: [id], map: "fk_client_reviewer")
+  reviewerId String  @db.Char(36)
+  
+  reviewee   Plumber @relation(fields: [revieweeId], references: [id], map: "fk_plumber_reviewee")
+  revieweeId String  @db.Char(36)
+}
 
 

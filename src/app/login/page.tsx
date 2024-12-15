@@ -29,7 +29,7 @@ export default function Login() {
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center space-y-[10%]">
-      <div className="bg-slate-600 p-20 rounded-lg shadow-xl ">
+      <div className="rounded-lg bg-slate-600 p-20 shadow-xl">
         <div>Plum Icon</div>
       </div>
       <div>

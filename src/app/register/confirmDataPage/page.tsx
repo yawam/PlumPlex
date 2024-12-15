@@ -13,8 +13,8 @@ export default async function ConfirmDataPage() {
     console.log("No session data available");
     return redirect(
       `/api/auth/signin?callbackUrl=${encodeURIComponent(
-        "/register/confirmDataPage"
-      )}`
+        "/register/confirmDataPage",
+      )}`,
     );
   }
 

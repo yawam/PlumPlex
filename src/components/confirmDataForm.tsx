@@ -39,8 +39,8 @@ export default function ConfirmDataForm({
       const endpoint = isPlumber
         ? "/api/plumberRoutes"
         : isClient
-        ? "/api/clientRoutes"
-        : null;
+          ? "/api/clientRoutes"
+          : null;
 
       if (!endpoint) {
         throw new Error("Use type not specified to choose endpoint");
@@ -70,7 +70,7 @@ export default function ConfirmDataForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 max-w-lg mx-auto">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-lg space-y-4 p-4">
       <h2 className="text-2xl font-semibold">Confirm Your Data</h2>
 
       <div>

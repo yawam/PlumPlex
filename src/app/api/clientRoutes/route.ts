@@ -20,7 +20,7 @@ export async function PATCH(req: Request) {
     console.error("Error updating client:", error);
     return NextResponse.json(
       { error: "Error updating client status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -74,7 +74,7 @@ export async function PUT(req: Request) {
     console.error("Error updating client:", error);
     return NextResponse.json(
       { error: "Error updating client" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

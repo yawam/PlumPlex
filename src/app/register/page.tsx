@@ -106,7 +106,7 @@ export default function Registration() {
       />
       <div className="flex h-screen w-screen flex-col items-center justify-center space-y-[5%]">
         <h2 className="text-3xl">Who are you?</h2>
-        <div className="flex flex-col space-y-4 ">
+        <div className="flex flex-col space-y-4">
           <Button
             onClick={handleSetClient}
             disabled={isSetting}

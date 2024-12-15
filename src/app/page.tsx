@@ -1,32 +1,58 @@
-"use client";
+// Import necessary functions from NextAuth and Next.js
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust this path based on where your auth options are defined
+import { redirect } from "next/navigation";
+import { PrismaClient } from "@prisma/client";
+import HomeContent from "@/components/homeContent";
 
-import { useSession, signOut } from "next-auth/react";
-// import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+// Async server component
 
-export default function Home() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+export default async function Home() {
+  // Fetch session on the server
+  const session = await getServerSession(authOptions);
+  const prisma = new PrismaClient();
 
-  if (session) {
-    console.log("session", session);
+  if (!session) {
+    return redirect("/login");
   }
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email ?? "",
+    },
+  });
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
+  const client = await prisma.client.findUnique({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const plumbers = await prisma.plumber.findMany();
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"; // Use an env variable or default to localhost
+  const response = await fetch(
+    `${baseUrl}/api/plumberRoutes/nearby?email=${client?.email}`,
+  );
+
+  const nearbyPlumbers = await response.json();
+
+  const boostedPlumbers = await prisma.plumber.findMany({
+    where: {
+      boosted: true,
+    },
+  });
+
+  // Redirect to login if there's no session (or return null as a placeholder if using `useRouter` to navigate to login)
+  if (!session) {
+    return redirect("/login");
   }
-
   return (
-    <div>
-      Welcome to home <Button onClick={() => signOut()}>Sign-Out</Button>
-    </div>
+    <HomeContent
+      client={client!}
+      plumbers={plumbers}
+      nearbyPlumbers={nearbyPlumbers}
+      boostedPlumbers={boostedPlumbers}
+    />
   );
 }
